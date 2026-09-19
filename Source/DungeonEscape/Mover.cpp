@@ -3,6 +3,8 @@
 
 #include "Mover.h"
 
+#include "Math/UnrealMathUtility.h"
+
 // Sets default values for this component's properties
 UMover::UMover()
 {
@@ -19,29 +21,7 @@ void UMover::BeginPlay()
 {
 	Super::BeginPlay();
 
-	float MyFloat = 10.0f;
-	float* MyFloatPointer = &MyFloat;
-
-	float Result = *MyFloatPointer + 10.0f;
-	UE_LOG(LogTemp, Display, TEXT("Result: %f"), Result);
-
-	*MyFloatPointer = 30.0f;
-	UE_LOG(LogTemp, Display, TEXT("MyFloat: %f"), MyFloat);
-	UE_LOG(LogTemp, Display, TEXT("MyFloatPointer: %f"), *MyFloatPointer);
-	UE_LOG(LogTemp, Display, TEXT("MyFloatPointer: %p"), MyFloatPointer);
-	UE_LOG(LogTemp, Display, TEXT("MyFloatPointer: %p"), &MyFloat);
-
-	// ------
-
-	FVector MyVector(1.0f, 2.0f, 3.0f);
-	FVector* MyVectorPointer = &MyVector;
-
-	MyVectorPointer->X = 10.0f;
-	MyVectorPointer->Y = 20.0f;
-	MyVectorPointer->Z = 30.0f;
-
-	UE_LOG(LogTemp, Display, TEXT("MyVector: %s"), *MyVector.ToString());
-	UE_LOG(LogTemp, Display, TEXT("MyVectorPointer: %p"), MyVectorPointer);
+	StartLocation = GetOwner()->GetActorLocation();
 
 }
 
@@ -50,5 +30,27 @@ void UMover::BeginPlay()
 void UMover::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (ShouldMove)
+	{
+		TargetLocation = StartLocation + MoveOffset;
+	}
+	else 
+	{
+		TargetLocation = StartLocation;
+	}
+
+	FVector CurrentLocation = GetOwner()->GetActorLocation();
+
+	ReachedTarget = CurrentLocation.Equals(TargetLocation); 
+
+	if (!ReachedTarget)
+	{
+		float Speed = MoveOffset.Length() / MoveTime;
+
+		FVector NewLocation = FMath::VInterpConstantTo(CurrentLocation, TargetLocation, DeltaTime, Speed);
+
+		GetOwner()->SetActorLocation(NewLocation);
+	}
 }
 
