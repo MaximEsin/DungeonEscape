@@ -17,17 +17,12 @@ void UTriggerComponent::BeginPlay()
         Mover = MoverActor->GetComponentByClass<UMover>();
         if (!Mover)
         {
-            UE_LOG(LogTemp, Warning, TEXT("Mover component not found on MoverActor"));
-        }
-        else 
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Mover component found on MoverActor"));
-            Mover->ShouldMove = true;
+            UE_LOG(LogTemp, Warning, TEXT("%s: Mover component not found on MoverActor"), *GetOwner()->GetActorNameOrLabel());
         }
     }
-    else 
+    else
     {
-        UE_LOG(LogTemp, Warning, TEXT("MoverActor is nullptr"));
+        UE_LOG(LogTemp, Warning, TEXT("%s: MoverActor is nullptr"), *GetOwner()->GetActorNameOrLabel());
     }
 
     if (IsPressurePlate)
@@ -48,7 +43,7 @@ void UTriggerComponent::Trigger(bool NewTriggerValue)
 
     if (Mover)
         {
-            Mover->ShouldMove = isTriggered;
+            Mover->SetShouldMove(isTriggered);
         }
     else
         {

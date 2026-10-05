@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Mover.h"
 
 #include "Math/UnrealMathUtility.h"
@@ -15,34 +14,23 @@ UMover::UMover()
 	// ...
 }
 
-
 // Called when the game starts
 void UMover::BeginPlay()
 {
 	Super::BeginPlay();
 
 	StartLocation = GetOwner()->GetActorLocation();
-
+	TargetLocation = StartLocation;
 }
 
-
 // Called every frame
-void UMover::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UMover::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (ShouldMove)
-	{
-		TargetLocation = StartLocation + MoveOffset;
-	}
-	else 
-	{
-		TargetLocation = StartLocation;
-	}
-
 	FVector CurrentLocation = GetOwner()->GetActorLocation();
 
-	ReachedTarget = CurrentLocation.Equals(TargetLocation); 
+	ReachedTarget = CurrentLocation.Equals(TargetLocation);
 
 	if (!ReachedTarget)
 	{
@@ -54,3 +42,21 @@ void UMover::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponent
 	}
 }
 
+bool UMover::GetShouldMove()
+{
+	return ShouldMove;
+}
+
+void UMover::SetShouldMove(bool NewShouldMove)
+{
+	ShouldMove = NewShouldMove;
+
+	if (ShouldMove)
+	{
+		TargetLocation = StartLocation + MoveOffset;
+	}
+	else
+	{
+		TargetLocation = StartLocation;
+	}
+}
