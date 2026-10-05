@@ -8,41 +8,44 @@
 #include "TriggerComponent.generated.h"
 
 /**
- * 
+ *
  */
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class DUNGEONESCAPE_API UTriggerComponent : public UBoxComponent
 {
 	GENERATED_BODY()
 
-public:	
-// Sets default values for this component's properties
+public:
+	// Sets default values for this component's properties
 	UTriggerComponent();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 	UPROPERTY(EditAnywhere)
-	AActor* MoverActor;
+	AActor *MoverActor;
 
-	UMover* Mover;
+	UMover *Mover;
 
-	 UFUNCTION()
-      void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-		
-      UFUNCTION()
-      void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	
-	  UPROPERTY(EditAnywhere)
-	  bool IsPressurePlate = false;
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent *OverlappedComp, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult);
 
-	  UPROPERTY(VisibleAnywhere)
-	  bool isTriggered = false;
+	UFUNCTION()
+	void OnOverlapEnd(UPrimitiveComponent *OverlappedComp, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex);
 
-	  void Trigger(bool NewTriggerValue);
+	UPROPERTY(EditAnywhere)
+	bool IsPressurePlate = false;
+
+	UPROPERTY(VisibleAnywhere)
+	bool isTriggered = false;
+
+	void Trigger(bool NewTriggerValue);
+
+	UPROPERTY(VisibleAnywhere)
+	int32 ActivatorCount = 0;
 };
