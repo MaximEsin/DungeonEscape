@@ -14,7 +14,7 @@ ADungeonEscapeCharacter::ADungeonEscapeCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-	
+
 	// Create the first person mesh that will be viewed only by this character's owner
 	FirstPersonMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("First Person Mesh"));
 
@@ -23,7 +23,7 @@ ADungeonEscapeCharacter::ADungeonEscapeCharacter()
 	FirstPersonMesh->FirstPersonPrimitiveType = EFirstPersonPrimitiveType::FirstPerson;
 	FirstPersonMesh->SetCollisionProfileName(FName("NoCollision"));
 
-	// Create the Camera Component	
+	// Create the Camera Component
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("First Person Camera"));
 	FirstPersonCameraComponent->SetupAttachment(FirstPersonMesh, FName("head"));
 	FirstPersonCameraComponent->SetRelativeLocationAndRotation(FVector(-2.8f, 5.89f, 0.0f), FRotator(0.0f, 90.0f, -90.0f));
@@ -44,10 +44,10 @@ ADungeonEscapeCharacter::ADungeonEscapeCharacter()
 	GetCharacterMovement()->AirControl = 0.5f;
 }
 
-void ADungeonEscapeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{	
+void ADungeonEscapeCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
+{
 	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	if (UEnhancedInputComponent *EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ADungeonEscapeCharacter::DoJumpStart);
@@ -59,6 +59,8 @@ void ADungeonEscapeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 		// Looking/Aiming
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADungeonEscapeCharacter::LookInput);
 		EnhancedInputComponent->BindAction(MouseLookAction, ETriggerEvent::Triggered, this, &ADungeonEscapeCharacter::LookInput);
+
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ADungeonEscapeCharacter::Interact);
 	}
 	else
 	{
@@ -66,25 +68,22 @@ void ADungeonEscapeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerI
 	}
 }
 
-
-void ADungeonEscapeCharacter::MoveInput(const FInputActionValue& Value)
+void ADungeonEscapeCharacter::MoveInput(const FInputActionValue &Value)
 {
 	// get the Vector2D move axis
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	// pass the axis values to the move input
 	DoMove(MovementVector.X, MovementVector.Y);
-
 }
 
-void ADungeonEscapeCharacter::LookInput(const FInputActionValue& Value)
+void ADungeonEscapeCharacter::LookInput(const FInputActionValue &Value)
 {
 	// get the Vector2D look axis
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	// pass the axis values to the aim input
 	DoAim(LookAxisVector.X, LookAxisVector.Y);
-
 }
 
 void ADungeonEscapeCharacter::DoAim(float Yaw, float Pitch)
@@ -117,4 +116,9 @@ void ADungeonEscapeCharacter::DoJumpEnd()
 {
 	// pass StopJumping to the character
 	StopJumping();
+}
+
+void ADungeonEscapeCharacter::Interact()
+{
+	UE_LOG(LogDungeonEscape, Log, TEXT("%s: Interact called"), *GetOwner()->GetActorNameOrLabel());
 }
