@@ -24,10 +24,25 @@ ALock::ALock()
 void ALock::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetIsKeyPlaced(true);
 }
 
 // Called every frame
 void ALock::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+bool ALock::GetIsKeyPlaced()
+{
+	return IsKeyPlaced;
+}
+
+void ALock::SetIsKeyPlaced(bool NewValue)
+{
+	IsKeyPlaced = NewValue;
+
+	TriggerComp->Trigger(NewValue);
+	KeyItemMesh->SetVisibility(NewValue);
 }
