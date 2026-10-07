@@ -120,5 +120,31 @@ void ADungeonEscapeCharacter::DoJumpEnd()
 
 void ADungeonEscapeCharacter::Interact()
 {
-	UE_LOG(LogDungeonEscape, Log, TEXT("%s: Interact called"), *GetOwner()->GetActorNameOrLabel());
+	FVector Start = FirstPersonCameraComponent->GetComponentLocation();
+	FVector End = Start + (FirstPersonCameraComponent->GetForwardVector() * MaxInteractDistance);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.0f);
+
+	FCollisionShape InteractionShape = FCollisionShape::MakeSphere(InteractSphereRadius);
+	DrawDebugSphere(GetWorld(), End, InteractSphereRadius, 20, FColor::Blue, false, 5.0f);
+
+	FHitResult HitResult;
+	bool HasHit = GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, ECC_GameTraceChannel2, InteractionShape);
+
+	if (HasHit)
+	{
+		AActor* HitActor = HitResult.GetActor();
+		
+		if (HitActor->ActorHasTag("CollectableItem"))
+		{
+			UE_LOG(LogDungeonEscape, Log, TEXT("Interact hit a collectable item: %s"), *GetNameSafe(HitActor));
+		}
+		else if (HitActor->ActorHasTag("Lock"))
+		{
+			UE_LOG(LogDungeonEscape, Log, TEXT("Interact hit a lock: %s"), *GetNameSafe(HitActor));
+		}
+	}
+	else
+	{
+		UE_LOG(LogDungeonEscape, Log, TEXT("Interact did not hit any actor."));
+	}
 }
