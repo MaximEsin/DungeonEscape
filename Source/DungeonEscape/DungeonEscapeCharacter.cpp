@@ -9,6 +9,8 @@
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DungeonEscape.h"
+#include "CollectableItem.h"
+#include "Lock.h"
 
 ADungeonEscapeCharacter::ADungeonEscapeCharacter()
 {
@@ -136,11 +138,41 @@ void ADungeonEscapeCharacter::Interact()
 		
 		if (HitActor->ActorHasTag("CollectableItem"))
 		{
-			UE_LOG(LogDungeonEscape, Log, TEXT("Interact hit a collectable item: %s"), *GetNameSafe(HitActor));
+			ACollectableItem* CollectableItem = Cast<ACollectableItem>(HitActor);
+			if (CollectableItem)
+			{
+				ItemList.Add(CollectableItem->ItemName);
+
+				CollectableItem->Destroy();
+			}
 		}
 		else if (HitActor->ActorHasTag("Lock"))
 		{
-			UE_LOG(LogDungeonEscape, Log, TEXT("Interact hit a lock: %s"), *GetNameSafe(HitActor));
+			ALock* Lock = Cast<ALock>(HitActor);
+			if (Lock)
+			{
+				if (!Lock->GetIsKeyPlaced())
+				{
+					if (ItemList.Contains(Lock->KeyItemName))
+					{
+
+						int32 ItemsRemoved = ItemList.RemoveSingle(Lock->KeyItemName);
+						if (ItemsRemoved)
+						{
+							Lock->SetIsKeyPlaced(true);
+						}
+						else
+						{
+							UE_LOG(LogDungeonEscape, Warning, TEXT("Failed to remove key item '%s' from inventory."), *Lock->KeyItemName);
+						}
+					}
+				}
+				else
+				{
+					Lock->SetIsKeyPlaced(false);
+					ItemList.Add(Lock->KeyItemName);
+				}
+			}
 		}
 	}
 	else
