@@ -124,10 +124,8 @@ void ADungeonEscapeCharacter::Interact()
 {
 	FVector Start = FirstPersonCameraComponent->GetComponentLocation();
 	FVector End = Start + (FirstPersonCameraComponent->GetForwardVector() * MaxInteractDistance);
-	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 5.0f);
 
 	FCollisionShape InteractionShape = FCollisionShape::MakeSphere(InteractSphereRadius);
-	DrawDebugSphere(GetWorld(), End, InteractSphereRadius, 20, FColor::Blue, false, 5.0f);
 
 	FHitResult HitResult;
 	bool HasHit = GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, ECC_GameTraceChannel2, InteractionShape);
